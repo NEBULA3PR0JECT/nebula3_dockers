@@ -3,22 +3,22 @@ export SHELL=/bin/bash
 rm -rf /storage/lost+found
 export PYTHONPATH=/notebooks/:/notebooks/nebula3_database
 export PATH=$PATH:/opt/conda/bin
+export TRANSFORMERS_CACHE=/nonetbooks/models
 if  [ ! -d "/notebooks" ]
 then
     mkdir /notebooks
+fi
+if  [ ! -d "/storage/models" ]
+then
+    mkdir -p /storage/models
 fi
 if [ ! -d "/notebooks/nebula3_database" ]
 then 
    cd /notebooks && \
    git clone https://github.com/NEBULA3PR0JECT/nebula3_database.git
-fi
-if [ ! -d "/notebooks/conda" ]
-then
-    /opt/conda/bin/conda create -y --prefix /notebooks/conda python=3.10
+   git clone https://github.com/NEBULA3PR0JECT/nebula3_vlm.git
 fi
 source activate nebula
-source /opt/conda/bin/activate --stack /notebooks/conda
-
 chmod -R a+w /notebooks
 if [ -z "$JUPYTER_TOKEN" ]; then
     JUPYTER_TOKEN=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 48 | head -n 1)
