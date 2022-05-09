@@ -5,9 +5,11 @@ LABEL com.nvidia.volumes.needed="nvidia_driver"
 COPY environment.yaml /environment.yaml
 ENV PYTHON_VERSION=3.9
 ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
-ENV PATH=$PATH:/notebooks/conda/bin/
+ENV PATH=$PATH:/opt/conda/bin/
 ENV USER nebula
 
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/7fa2af80.pub
 RUN apt-get update && apt-get install -y --no-install-recommends \
     vim \
     ca-certificates \
@@ -23,7 +25,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-get install -y --no-install-recommends python-dev python3-pip python3-setuptools && \
     apt-get install ffmpeg libsm6 libxext6  -y && \
     rm -rf /var/lib/apt/lists/* && \
-    curl -fsSL https://code-server.dev/install.sh | sh && \
     curl -o ~/miniconda.sh -O  https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh  && \
     chmod +x ~/miniconda.sh && \
     ~/miniconda.sh -b -p /opt/conda && \
@@ -31,11 +32,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     /opt/conda/bin/conda install conda-build && \
     /opt/conda/bin/conda env create -f environment.yaml && \
     /opt/conda/bin/conda clean --all -y
-    
+
+WORKDIR /tmp
+RUN CODE_SERVER_VERSION=4.1.0 && \
+    ARCH="$(dpkg --print-architecture)" && \
+    curl -fOL https://github.com/cdr/code-server/releases/download/v${CODE_SERVER_VERSION}/code-server_${CODE_SERVER_VERSION}_${ARCH}.deb
+
+RUN CODE_SERVER_VERSION=4.1.0 && \
+    ARCH="$(dpkg --print-architecture)" && \
+    dpkg -i ./code-server_${CODE_SERVER_VERSION}_${ARCH}.deb && rm ./code-server_${CODE_SERVER_VERSION}_${ARCH}.deb
 
 # Create Environment
-ENV PATH /notebooks/conda/conda/bin:$PATH
-ENV PATH /notebooks/conda/envs/nebula/bin:$PATH
+ENV PATH /opt/conda/bin:$PATH
+ENV PATH /opt/conda/envs/nebula/bin:$PATH
 #COPY  run.sh /run.sh
 COPY  dev_run.sh /run.sh
 COPY jfont.settings  /root/.jupyter/lab/user-settings/\@jupyterlab/terminal-extension/plugin.jupyterlab-settings
@@ -47,7 +56,6 @@ COPY theme.settings /root/.jupyter/lab/user-settings/\@jupyterlab/apputils-exten
 # train and serve programs are found when the container is invoked.
 ENV PYTHONUNBUFFERED=TRUE
 ENV PYTHONDONTWRITEBYTECODE=TRUE
-ENV PATH="/nebula:${PATH}"
 EXPOSE 8888
 # Set up the program in the image
 WORKDIR /notebooks
