@@ -3,14 +3,6 @@ export SHELL=/bin/bash
 rm -rf /storage/lost+found
 export PYTHONPATH=/notebooks/:/notebooks/nebula3_database:/notebooks/nebula3_videoprocessing:/notebooks/VidIL
 export TRANSFORMERS_CACHE=/storage/models
-if  [ ! -d "/notebooks" ]
-then
-    mkdir /notebooks
-fi
-if  [ ! -d "/storage/models" ]
-then
-    mkdir -p /storage/models
-fi
 if [ ! -d "/notebooks/nebula3_database" ]
 then 
    cd /notebooks && \
@@ -18,7 +10,6 @@ then
    git clone https://github.com/NEBULA3PR0JECT/nebula3_videoprocessing.git
    git clone https://github.com/NEBULA3PR0JECT/VidIL.git 
 fi
-chmod -R a+w /notebooks
 if [ -z "$JUPYTER_TOKEN" ]; then
     source activate nebula
     JUPYTER_TOKEN=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 48 | head -n 1)
