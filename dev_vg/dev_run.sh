@@ -1,15 +1,32 @@
 #!/bin/bash
 export SHELL=/bin/bash
 rm -rf /storage/lost+found
-export PYTHONPATH=/notebooks/:/notebooks/nebula3_database:/notebooks/nebula3_videoprocessing:/notebooks/VidIL
-export TRANSFORMERS_CACHE=/storage/models
+export PYTHONPATH=/notebooks/:/notebooks/nebula3_database:/notebooks/nebula3_vlm
+export PATH=$PATH:/opt/conda/bin
+export TRANSFORMERS_CACHE=/nonetbooks/models
+if  [ ! -d "/notebooks" ]
+then
+    mkdir /notebooks
+fi
+if  [ ! -d "/storage/models" ]
+then
+    mkdir -p /storage/models
+fi
 if [ ! -d "/notebooks/nebula3_database" ]
 then 
    cd /notebooks && \
    git clone https://github.com/NEBULA3PR0JECT/nebula3_database.git
+   git clone https://github.com/NEBULA3PR0JECT/nebula3_vlm.git
    git clone https://github.com/NEBULA3PR0JECT/nebula3_videoprocessing.git
-   git clone https://github.com/NEBULA3PR0JECT/VidIL.git 
+   git clone https://github.com/NEBULA3PR0JECT/nebula3_playground.git
+   wget -O /notebooks/SPICE.zip https://panderson.me/images/SPICE-1.0.zip
+   unzip SPICE.zip
+   cd SPICE-1.0/
+   ./get_stanford_models.sh
+   rm /notebooks/SPICE.zip
 fi
+chmod -R a+w /notebooks
+source activate nebula && python -m spacy download en_core_web_lg
 if [ -z "$JUPYTER_TOKEN" ]; then
     source activate nebula
     JUPYTER_TOKEN=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 48 | head -n 1)

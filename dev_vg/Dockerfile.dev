@@ -1,4 +1,4 @@
-FROM nvidia/cuda:10.2-cudnn8-devel-ubuntu18.04
+FROM nvidia/cuda:10.2-cudnn8-runtime-ubuntu18.04
 # See http://bugs.python.org/issue19846
 ENV LANG C.UTF-8
 LABEL com.nvidia.volumes.needed="nvidia_driver"
@@ -23,19 +23,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     openssh-client && \
     apt-get install -y --no-install-recommends curl wget && \
     apt-get install -y --no-install-recommends python-dev python3-pip python3-setuptools && \
-    apt-get install ffmpeg libsm6 libxext6  -y && \
+    apt-get install ffmpeg libsm6 libxext6 default-jre -y && \
     rm -rf /var/lib/apt/lists/* && \
     curl -o ~/miniconda.sh -O  https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh  && \
     chmod +x ~/miniconda.sh && \
     ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh && \
     /opt/conda/bin/conda install conda-build && \
+    /opt/conda/bin/conda env create -f environment.yaml && \
     /opt/conda/bin/conda clean --all -y
-#    /opt/conda/bin/conda env create -f environment.yaml && \
-
-RUN /opt/conda/bin/conda config --append channels conda-forge && /opt/conda/bin/conda config --append channels pytorch && \
-    if [ -f "/environment.yaml" ]; then umask 0002 && /opt/conda/bin/conda env update -n base -f /environment.yaml; fi \
-    && conda clean --all --yes && rm /environment.yaml
 
 WORKDIR /tmp
 RUN CODE_SERVER_VERSION=4.1.0 && \

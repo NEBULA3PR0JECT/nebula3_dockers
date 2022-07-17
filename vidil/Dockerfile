@@ -1,5 +1,6 @@
 FROM mikewangwzhl/vidil 
-COPY  dev_run.sh /run.sh
+COPY  dev_run.sh /dev_run.sh
+COPY  run.sh /run.sh
 WORKDIR /tmp
 RUN CODE_SERVER_VERSION=4.1.0 && \
     ARCH="$(dpkg --print-architecture)" && \
@@ -13,4 +14,5 @@ ENV PYTHONUNBUFFERED=TRUE
 ENV PYTHONDONTWRITEBYTECODE=TRUE
 EXPOSE 8888
 # Set up the program in the image
+RUN useradd -ms /bin/bash nebula 
 WORKDIR /notebooks

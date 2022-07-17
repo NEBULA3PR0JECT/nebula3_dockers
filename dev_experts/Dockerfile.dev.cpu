@@ -1,15 +1,15 @@
-FROM nvidia/cuda:10.2-cudnn8-devel-ubuntu18.04
+FROM ubuntu:18.04
 # See http://bugs.python.org/issue19846
 ENV LANG C.UTF-8
-LABEL com.nvidia.volumes.needed="nvidia_driver"
+#LABEL com.nvidia.volumes.needed="nvidia_driver"
 COPY environment.yaml /environment.yaml
 ENV PYTHON_VERSION=3.9
-ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
+#ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
 ENV PATH=$PATH:/opt/conda/bin/
 ENV USER nebula
 
-RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
-RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/7fa2af80.pub
+#RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
+#RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/7fa2af80.pub
 RUN apt-get update && apt-get install -y --no-install-recommends \
     vim \
     ca-certificates \
