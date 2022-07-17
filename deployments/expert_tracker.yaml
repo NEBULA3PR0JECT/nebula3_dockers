@@ -1,4 +1,5 @@
-image: aharonamir/nebula3_expert_tracker:a4f27b2
+# image: aharonamir/nebula3_expert_tracker:a4f27b2
+image: aharonamir/nebula3_expert_tracker:2f53b27
 port: 8000
 env:
   - name: ARANGO_DB
@@ -9,4 +10,3 @@ env:
 resources:
   replicas: 1
   instanceType: RTX4000
-
